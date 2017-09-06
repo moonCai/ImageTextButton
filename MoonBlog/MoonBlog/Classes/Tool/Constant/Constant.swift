@@ -15,6 +15,9 @@ struct Constant {
     //首页复用cell的重用标记
     static let HomeCell_ID = "HomeCell_ID"
     
+    //转发微博配图cell重用标记
+    static let retPictureCell_ID = "retPictureCell_ID"
+    
     //屏幕宽度
     static let ScreenW = UIScreen.main.bounds.size.width
     
