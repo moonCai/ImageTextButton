@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SnapKit
 
 class CYHomeOriginalView: UIView {
     
@@ -29,6 +30,22 @@ class CYHomeOriginalView: UIView {
             vertifyImgV.image = orignalVM?.vertifyImg
             //会员等级
             mbrankImgV.image = orignalVM?.mbrankImg
+            //卸载约束
+            oriBottonConstraint?.deactivate()
+            //原创微博配图
+            if let picStatus = orignalVM?.homeStatusModel?.pic_urls, picStatus.count > 0 {  //有配图
+                orignalPicV.dataArr = picStatus
+                orignalPicV.isHidden = false
+                self.snp.makeConstraints({ (make) in
+                    make.bottom.equalTo(orignalPicV).offset(10)
+                })
+                
+            } else { //无配图
+                orignalPicV.isHidden = true
+                self.snp.makeConstraints({ (make) in
+                    make.bottom.equalTo(originalLab).offset(10)
+                })
+            }
         }
     }
     
@@ -77,6 +94,16 @@ class CYHomeOriginalView: UIView {
         lab.textAlignment = .left
         return lab
     }()
+    
+    //原创微博配图
+    fileprivate lazy var orignalPicV:CYHomePictureCollView = {
+        let picV =  CYHomePictureCollView()
+        picV.backgroundColor = UIColor.purple
+        return picV
+    }()
+    
+    //原创微博底部约束
+    var oriBottonConstraint:Constraint?
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -97,6 +124,7 @@ class CYHomeOriginalView: UIView {
         addSubview(timeLab)
         addSubview(sourceLab)
         addSubview(originalLab)
+        addSubview(orignalPicV)
         
         headerImgV.snp.makeConstraints { (make) in
             make.top.leading.equalToSuperview().offset(10)
@@ -134,8 +162,14 @@ class CYHomeOriginalView: UIView {
             make.trailing.equalToSuperview().offset(-10)
         }
         
+        orignalPicV.snp.makeConstraints { (make) in
+            make.leading.equalTo(originalLab)
+            make.top.equalTo(originalLab.snp.bottom).offset(10)
+            make.width.height.equalTo(100)
+        }
+        
         self.snp.makeConstraints { (make) in
-            make.bottom.equalTo(originalLab.snp.bottom).offset(10)
+           oriBottonConstraint = make.bottom.equalTo(orignalPicV.snp.bottom).offset(10).constraint
         }
     }
 
