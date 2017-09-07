@@ -61,10 +61,11 @@ class CYHomePictureCollView: UICollectionView {
     }
     
     private func setupUI() {
-        backgroundColor = UIColor.red
+        backgroundColor = UIColor(white: 0.93, alpha: 1.0)
+        //添加控件
         dataSource = self
         //注册cell
-        register(UICollectionViewCell.self, forCellWithReuseIdentifier: Constant.retPictureCell_ID)
+        register(CYPictureCell.self, forCellWithReuseIdentifier: Constant.retPictureCell_ID)
 //        addSubview(countLabel)
 //        
 //        countLabel.snp.makeConstraints { (make) in
@@ -79,9 +80,41 @@ extension CYHomePictureCollView:UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Constant.retPictureCell_ID, for: indexPath)
-        cell.backgroundColor = UIColor.yellow
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Constant.retPictureCell_ID, for: indexPath) as! CYPictureCell
+        cell.pictureInfo = dataArr?[indexPath.item]
         return cell
     }
 
+}
+
+class CYPictureCell: UICollectionViewCell {
+    
+    var pictureInfo:CYHomePictureModel? {
+        didSet {
+            if let url = pictureInfo?.thumbnail_pic {
+                imgV.sd_setImage(with: URL(string:url), placeholderImage: UIImage(named:"timeline_image_placeholder"))
+            }
+        }
+    }
+    
+    fileprivate lazy var imgV:UIImageView = {
+        let imgV = UIImageView(image:UIImage(named: "timeline_image_placeholder"))
+        imgV.contentMode = .scaleAspectFill
+        //剪切超出的部分
+        imgV.clipsToBounds = true
+        return imgV
+    }()
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        contentView.addSubview(imgV)
+        imgV.snp.makeConstraints { (make) in
+            make.edges.equalToSuperview()
+        }
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
 }
