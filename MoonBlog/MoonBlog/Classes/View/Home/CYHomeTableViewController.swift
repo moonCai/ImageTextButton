@@ -11,6 +11,13 @@ import YYModel
 
 class CYHomeTableViewController: CYVisitorTableViewController {
     
+    //等待视图
+    fileprivate lazy var indicatorView:UIActivityIndicatorView = {
+        let view = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
+        view.color = UIColor.red
+        return view
+    }()
+    
     fileprivate lazy var homeViewModel:CYHomeViewModel = CYHomeViewModel()
     
     override func viewDidLoad() {
@@ -26,6 +33,10 @@ class CYHomeTableViewController: CYVisitorTableViewController {
             tableView.estimatedRowHeight = 200
             //取消分割线
             tableView.separatorStyle = .none
+            indicatorView.bounds.size.height = 60
+            //设置底部视图
+            tableView.tableFooterView = indicatorView
+            indicatorView.startAnimating()
             
         } else { //非登录状态下
             visitorView?.updateVisitorview(imageName: nil, describeStr: nil)
@@ -63,6 +74,14 @@ extension CYHomeTableViewController {
         //取消cell选中状态
         cell.selectionStyle = .none
         return cell
+    }
+    
+    //监听cell的显示
+    override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        if indexPath.row == homeViewModel.dataArr.count - 1,indicatorView.isAnimating {
+            print("滚动到最后一个cell了")
+            indicatorView.startAnimating()
+        }
     }
     
 }

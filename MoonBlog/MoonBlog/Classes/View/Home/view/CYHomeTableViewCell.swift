@@ -11,7 +11,7 @@ import SnapKit
 
 //展示动态的自定义cell,包含原创微博. 转发微博和评论/转发/点赞
 class CYHomeTableViewCell: UITableViewCell {
-    
+ 
     //homeBar的顶部约束
     var topConstrant: Constraint?
     
@@ -39,8 +39,6 @@ class CYHomeTableViewCell: UITableViewCell {
                    topConstrant = make.top.equalTo(retweetView.snp.bottom).constraint
                 })
             }
-    
-            
         }
     
     }
