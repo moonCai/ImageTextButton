@@ -31,7 +31,7 @@ class CYHomePictureCollView: UICollectionView {
         flowLayout.itemSize = CGSize(width: itemWH, height: itemWH)
         flowLayout.minimumInteritemSpacing = 5
         flowLayout.minimumLineSpacing = 5
-        super.init(frame: .zero, collectionViewLayout: flowLayout)
+        super.init(frame: frame, collectionViewLayout: flowLayout)
         setupUI()
     }
     

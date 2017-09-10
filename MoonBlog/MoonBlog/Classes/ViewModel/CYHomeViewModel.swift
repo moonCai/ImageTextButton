@@ -11,11 +11,20 @@ import UIKit
 class CYHomeViewModel: NSObject {
     
     //数据源
-    lazy var dataArr:[CYHomeCellViewModel] = [CYHomeCellViewModel]()
+     lazy var dataArr:[CYHomeCellViewModel] = [CYHomeCellViewModel]()
 
 //MARK ---- 首页相关接口
-    func requestHomeData(callBack:@escaping (Bool)->()) {
-        CYHTTPSessionManager.sharedTools.requestHomeData(accessToken: (CYUserAccountViewModel.sharedViewModel.userAccount?.access_token)!) { (response, error) in
+    func requestHomeData(isPullUp:Bool,callBack:@escaping (Bool)->()) {
+        
+        var maxid:Int64 = 0
+        
+        if dataArr.count > 0 {
+            if let idNum = dataArr.last?.homeStatusModel?.id {
+                maxid = idNum - 1
+            }
+        }
+    
+        CYHTTPSessionManager.sharedTools.requestHomeData(isPullUp:isPullUp,maxID:maxid, accessToken: (CYUserAccountViewModel.sharedViewModel.userAccount?.access_token)!) { (response, error) in
             if error != nil {
                 print("网络异常,\(String(describing: error))")
                 callBack(false)
@@ -45,8 +54,10 @@ class CYHomeViewModel: NSObject {
                 tmpArr.append(cellVM)
             }
             
-            self.dataArr = tmpArr
-          //  print(tmpArr)
+            if isPullUp { //上拉加载
+                self.dataArr.append(contentsOf: tmpArr)
+            }
+            
             callBack(true)
     
         }

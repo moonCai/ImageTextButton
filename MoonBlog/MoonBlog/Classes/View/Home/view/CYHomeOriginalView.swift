@@ -34,16 +34,16 @@ class CYHomeOriginalView: UIView {
             oriBottonConstraint?.deactivate()
             //原创微博配图
             if let picStatus = orignalVM?.homeStatusModel?.pic_urls, picStatus.count > 0 {  //有配图
-                orignalPicV.dataArr = picStatus
                 orignalPicV.isHidden = false
+                orignalPicV.dataArr = picStatus
                 self.snp.makeConstraints({ (make) in
-                    make.bottom.equalTo(orignalPicV).offset(10)
+                  oriBottonConstraint =  make.bottom.equalTo(orignalPicV).offset(10).constraint
                 })
-                
+           
             } else { //无配图
                 orignalPicV.isHidden = true
                 self.snp.makeConstraints({ (make) in
-                    make.bottom.equalTo(originalLab).offset(10)
+                    oriBottonConstraint = make.bottom.equalTo(originalLab).offset(10).constraint
                 })
             }
         }
@@ -98,7 +98,7 @@ class CYHomeOriginalView: UIView {
     //原创微博配图
     fileprivate lazy var orignalPicV:CYHomePictureCollView = {
         let picV =  CYHomePictureCollView()
-        picV.backgroundColor = UIColor.purple
+//        picV.backgroundColor = UIColor.purple
         return picV
     }()
     

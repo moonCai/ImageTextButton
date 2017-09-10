@@ -55,11 +55,12 @@ class CYHTTPSessionManager: AFHTTPSessionManager {
 //MARK ---- 获取首页相关数据
 extension CYHTTPSessionManager {
     
-    func requestHomeData(accessToken:String,callBack:@escaping (Any?,Error?)->Void) {
+    func requestHomeData(isPullUp:Bool,maxID:Int64 = 0,accessToken:String,callBack:@escaping (Any?,Error?)->Void) {
         let urlStr = "https://api.weibo.com/2/statuses/home_timeline.json"
         let params = [
-            "access_token":accessToken
-        ]
+            "access_token":accessToken,
+            "max_id":maxID
+        ] as [String : Any]
         
         requestData(type: .get, urlStr: urlStr, params: params, finishCallBack: callBack)
     }

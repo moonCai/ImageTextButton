@@ -47,11 +47,19 @@ class CYHomeTableViewController: CYVisitorTableViewController {
     //MARK ---- 加载网页数据
     func loadData() {
         
-        homeViewModel.requestHomeData { (isSuccess) in
+        homeViewModel.requestHomeData(isPullUp: true) { (isSuccess) in
+            self.stopRefresh()
             if isSuccess {
+               
                 self.tableView.reloadData()
             }
         }
+    }
+    
+    func stopRefresh() {
+        //停止等待视图
+        self.indicatorView.stopAnimating()
+    
     }
 }
 
@@ -78,8 +86,9 @@ extension CYHomeTableViewController {
     
     //监听cell的显示
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        if indexPath.row == homeViewModel.dataArr.count - 1,indicatorView.isAnimating {
-            print("滚动到最后一个cell了")
+    
+        if indexPath.row == homeViewModel.dataArr.count - 1,!indicatorView.isAnimating {
+            loadData()
             indicatorView.startAnimating()
         }
     }
