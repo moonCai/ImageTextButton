@@ -11,11 +11,18 @@ import YYModel
 
 class CYHomeTableViewController: CYVisitorTableViewController {
     
-    //等待视图
+    //等待视图(上拉加载)
     fileprivate lazy var indicatorView:UIActivityIndicatorView = {
         let view = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
         view.color = UIColor.red
         return view
+    }()
+    
+    //下拉刷新
+    fileprivate lazy var pullDownView:UIRefreshControl = {
+        let refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self, action: #selector(pullDownAction), for: .valueChanged)
+        return refreshControl
     }()
     
     fileprivate lazy var homeViewModel:CYHomeViewModel = CYHomeViewModel()
@@ -37,6 +44,8 @@ class CYHomeTableViewController: CYVisitorTableViewController {
             //设置底部视图
             tableView.tableFooterView = indicatorView
             indicatorView.startAnimating()
+            //设置下拉刷新视图
+            self.refreshControl = pullDownView
             
         } else { //非登录状态下
             visitorView?.updateVisitorview(imageName: nil, describeStr: nil)
@@ -44,10 +53,15 @@ class CYHomeTableViewController: CYVisitorTableViewController {
     
     }
     
+    //MARK ---- 下拉加载
+  @objc private  func pullDownAction() {
+        loadData()
+    }
+    
     //MARK ---- 加载网页数据
     func loadData() {
         
-        homeViewModel.requestHomeData(isPullUp: true) { (isSuccess) in
+        homeViewModel.requestHomeData(isPullUp: indicatorView.isAnimating) { (isSuccess) in
             self.stopRefresh()
             if isSuccess {
                
@@ -59,7 +73,8 @@ class CYHomeTableViewController: CYVisitorTableViewController {
     func stopRefresh() {
         //停止等待视图
         self.indicatorView.stopAnimating()
-    
+        //停止下拉刷新
+        self.refreshControl?.endRefreshing()
     }
 }
 
@@ -88,8 +103,8 @@ extension CYHomeTableViewController {
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
     
         if indexPath.row == homeViewModel.dataArr.count - 1,!indicatorView.isAnimating {
-            loadData()
             indicatorView.startAnimating()
+            loadData()
         }
     }
     

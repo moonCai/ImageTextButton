@@ -17,14 +17,18 @@ class CYHomeViewModel: NSObject {
     func requestHomeData(isPullUp:Bool,callBack:@escaping (Bool)->()) {
         
         var maxid:Int64 = 0
+        var sinceid:Int64 = 0
         
-        if dataArr.count > 0 {
-            if let idNum = dataArr.last?.homeStatusModel?.id {
-                maxid = idNum - 1
+        if isPullUp {   //上拉刷新
+            maxid = dataArr.last?.homeStatusModel?.id  ??  0
+            if maxid > 0 {
+                maxid = maxid - 1
             }
+        } else {    //下拉加载
+            sinceid = dataArr.first?.homeStatusModel?.id ?? 0
         }
     
-        CYHTTPSessionManager.sharedTools.requestHomeData(isPullUp:isPullUp,maxID:maxid, accessToken: (CYUserAccountViewModel.sharedViewModel.userAccount?.access_token)!) { (response, error) in
+        CYHTTPSessionManager.sharedTools.requestHomeData(isPullUp:isPullUp,maxID:maxid, sinceID:sinceid,accessToken: (CYUserAccountViewModel.sharedViewModel.userAccount?.access_token)!) { (response, error) in
             if error != nil {
                 print("网络异常,\(String(describing: error))")
                 callBack(false)
@@ -56,6 +60,8 @@ class CYHomeViewModel: NSObject {
             
             if isPullUp { //上拉加载
                 self.dataArr.append(contentsOf: tmpArr)
+            } else { //下拉刷新
+                self.dataArr.insert(contentsOf:tmpArr , at: 0)
             }
             
             callBack(true)
